@@ -3,7 +3,9 @@ name: Build Debug APK
 on:
   push:
     branches: [ "main" ]
-  # This line adds a "Run workflow" button in the GitHub Actions tab
+  pull_request:
+    branches: [ "main" ]
+  # This adds a manual "Run workflow" button in your GitHub Actions dashboard
   workflow_dispatch: 
 
 jobs:
@@ -28,14 +30,15 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build Debug APK
-      # This builds the app without requiring custom Keystore secrets
+      # This compiles the code safely without needing specialized production Keystores
       run: ./gradlew assembleDebug 
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: my-android-app-debug
-        # Grabs all generated APKs in the debug folder
-        path: app/build/outputs/apk/debug/*.apk 
+        name: Mr-BAIG-Debug-APK
+        # FIX IMPLEMENTED: The ** search pattern forces GitHub to look inside all 
+        # flavor and nested subdirectories so it will never give a "No files found" error.
+        path: app/build/outputs/apk/**/*.apk 
         if-no-files-found: error
         retention-days: 7

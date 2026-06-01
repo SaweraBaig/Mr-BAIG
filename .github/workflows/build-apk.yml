@@ -1,11 +1,8 @@
-name: Build Debug APK
+name: Build Single Debug APK
 
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  # This adds a manual "Run workflow" button in your GitHub Actions dashboard
   workflow_dispatch: 
 
 jobs:
@@ -29,16 +26,16 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Build Debug APK
-      # This compiles the code safely without needing specialized production Keystores
-      run: ./gradlew assembleDebug 
+    - name: Build Generic Debug Only
+      # Changing this from assembleDebug to assembleGenericDebug 
+      # prevents Gradle from compiling every single production flavor
+      run: ./gradlew assembleGenericDebug
 
-    - name: Upload APK Artifact
+    - name: Upload Single APK Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Mr-BAIG-Debug-APK
-        # FIX IMPLEMENTED: The ** search pattern forces GitHub to look inside all 
-        # flavor and nested subdirectories so it will never give a "No files found" error.
-        path: app/build/outputs/apk/**/*.apk 
+        name: Mr-BAIG-Single-Debug-APK
+        # Narrows the path to just the generic debug folder
+        path: app/build/outputs/apk/generic/debug/*.apk
         if-no-files-found: error
         retention-days: 7
